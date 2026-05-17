@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Parent - Invoke two nested stacks (users+group, then per-user policies)
+
+Parameters:
+  User1Name:
+    Type: String
+    Default: user-alice
+    AllowedPattern: '^[A-Za-z0-9+=,.@_-]{1,64}$'
+  User2Name:
+    Type: String
+    Default: user-bob
+    AllowedPattern: '^[A-Za-z0-9+=,.@_-]{1,64}$'
+  GroupName:
+    Type: String
+    Default: devops-group
+    AllowedPattern: '^[A-Za-z0-9+=,.@_-]{1,128}$'
+
+Resources:
+  UsersGroupStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-xe7v95hr2vet-ap-south-1.s3.ap-south-1.amazonaws.com/t1.yml
+      Parameters:
+        User1Name: !Ref User1Name
+        User2Name: !Ref User2Name
+        GroupName: !Ref GroupName
+
+  PerUserPoliciesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-xe7v95hr2vet-ap-south-1.s3.ap-south-1.amazonaws.com/t2.yml
+      Parameters:
+        # Use outputs from Child-1; this creates an implicit dependency so CFN builds in the right order
+        UserForS3: !GetAtt UsersGroupStack.Outputs.OutUser1Name
+        UserForEC2: !GetAtt UsersGroupStack.Outputs.OutUser2Name
+
+Outputs:
+  CreatedUser1:
+    Value: !GetAtt UsersGroupStack.Outputs.OutUser1Name
+  CreatedUser2:
+    Value: !GetAtt UsersGroupStack.Outputs.OutUser2Name
+  CreatedGroup:
+    Value: !GetAtt UsersGroupStack.Outputs.OutGroupName

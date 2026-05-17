@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Child-2 - Attach S3 full access to User-1 and EC2 full access to User-2 (inline policies)
+
+Parameters:
+  UserForS3:
+    Type: String
+    Description: Existing IAM username that should get S3 full access
+  UserForEC2:
+    Type: String
+    Description: Existing IAM username that should get EC2 full access
+
+Resources:
+  S3FullAccessInline:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: Attach-S3-FullAccess-Inline
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: 's3:*'
+            Resource: '*'
+      Users:
+        - !Ref UserForS3
+
+  EC2FullAccessInline:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: Attach-EC2-FullAccess-Inline
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: 'ec2:*'
+            Resource: '*'
+      Users:
+        - !Ref UserForEC2

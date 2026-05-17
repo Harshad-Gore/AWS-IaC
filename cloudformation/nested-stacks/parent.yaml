@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Parent stack to create VPC, IAM, and EC2 via nested stacks.
+
+Parameters:
+  VpcTemplateUrl:
+    Type: String
+    Description: S3 URL for the VPC child template
+  IamTemplateUrl:
+    Type: String
+    Description: S3 URL for the IAM child template
+  Ec2TemplateUrl:
+    Type: String
+    Description: S3 URL for the EC2 child template
+  VpcCidr:
+    Type: String
+    Default: 10.10.0.0/16
+  PublicSubnetCidr:
+    Type: String
+    Default: 10.10.1.0/24
+  AvailabilityZone:
+    Type: String
+    Default: ap-south-1a
+  InstanceType:
+    Type: String
+    Default: t2.micro
+  AmiId:
+    Type: AWS::EC2::Image::Id
+    Description: AMI for EC2 child stack
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Key pair for SSH
+
+Resources:
+  VpcStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref VpcTemplateUrl
+      Parameters:
+        VpcCidr: !Ref VpcCidr
+        PublicSubnetCidr: !Ref PublicSubnetCidr
+        AvailabilityZone: !Ref AvailabilityZone
+
+  IamStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref IamTemplateUrl
+
+  Ec2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref Ec2TemplateUrl
+      Parameters:
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+        PublicSubnetId: !GetAtt VpcStack.Outputs.PublicSubnetId
+        InstanceProfileName: !GetAtt IamStack.Outputs.InstanceProfileName
+        AmiId: !Ref AmiId
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref KeyName
+
+Outputs:
+  VpcId:
+    Value: !GetAtt VpcStack.Outputs.VpcId
+  InstanceId:
+    Value: !GetAtt Ec2Stack.Outputs.InstanceId
+  InstancePublicIp:
+    Value: !GetAtt Ec2Stack.Outputs.PublicIp

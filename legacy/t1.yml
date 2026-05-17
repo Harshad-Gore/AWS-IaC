@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Child-1 - Create two IAM users, one IAM group, and add both users to the group
+
+Parameters:
+  User1Name:
+    Type: String
+    Description: Name for first IAM user
+    AllowedPattern: '^[A-Za-z0-9+=,.@_-]{1,64}$'
+  User2Name:
+    Type: String
+    Description: Name for second IAM user
+    AllowedPattern: '^[A-Za-z0-9+=,.@_-]{1,64}$'
+  GroupName:
+    Type: String
+    Description: Name for IAM group
+    AllowedPattern: '^[A-Za-z0-9+=,.@_-]{1,128}$'
+
+Resources:
+  User1:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref User1Name
+      Path: /
+  User2:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref User2Name
+      Path: /
+  Group:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Ref GroupName
+      Path: /
+
+  AddUsersToGroup:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref GroupName
+      Users:
+        - !Ref User1   # Ref returns the IAM UserName
+        - !Ref User2
+
+Outputs:
+  OutUser1Name:
+    Description: First user name
+    Value: !Ref User1
+    Export:
+      Name: !Sub '${AWS::StackName}-User1Name'
+  OutUser2Name:
+    Description: Second user name
+    Value: !Ref User2
+    Export:
+      Name: !Sub '${AWS::StackName}-User2Name'
+  OutGroupName:
+    Description: Group name
+    Value: !Ref Group
+    Export:
+      Name: !Sub '${AWS::StackName}-GroupName'

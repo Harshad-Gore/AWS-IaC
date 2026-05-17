@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Issue Reporter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap');
+
+        :root {
+            --bg-1: #f4f7f9;
+            --bg-2: #e7eef3;
+            --surface: #ffffff;
+            --surface-soft: #f8fbfd;
+            --text-strong: #132a3f;
+            --text-muted: #5c6c78;
+            --primary: #0f5b78;
+            --primary-hover: #0d4d66;
+            --secondary: #44515c;
+            --secondary-hover: #2f3a43;
+            --border: #d5e0e9;
+            --danger: #b83b3b;
+            --danger-hover: #9d3131;
+            --success: #2f8f5b;
+            --success-hover: #27764b;
+            --shadow-card: 0 24px 42px rgba(16, 37, 55, 0.11);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 28px 20px 36px;
+            font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+            color: var(--text-strong);
+            background:
+                radial-gradient(circle at 12% 5%, rgba(15, 91, 120, 0.12), transparent 35%),
+                radial-gradient(circle at 85% 95%, rgba(64, 84, 99, 0.1), transparent 30%),
+                linear-gradient(155deg, var(--bg-1), var(--bg-2));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(19, 42, 63, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(19, 42, 63, 0.035) 1px, transparent 1px);
+            background-size: 34px 34px;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        .header {
+            max-width: 1100px;
+            margin: 0 auto 24px;
+            text-align: center;
+            animation: rise-in 520ms ease-out;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+            font-size: clamp(1.7rem, 2.7vw, 2.4rem);
+            letter-spacing: 0.01em;
+        }
+
+        .header p {
+            margin: 10px auto 0;
+            max-width: 760px;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+        }
+
+        .container-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            width: 100%;
+            background: linear-gradient(180deg, var(--surface), var(--surface-soft));
+            border: 1px solid rgba(213, 224, 233, 0.8);
+            border-radius: 18px;
+            box-shadow: var(--shadow-card);
+            padding: 24px;
+            animation: rise-in 620ms ease-out;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 120ms;
+        }
+
+        h2 {
+            margin: 0 0 16px;
+            font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-strong);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card-heading h2 {
+            margin: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2a3e4f;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 12px;
+            margin: 0 0 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--text-strong);
+            font: inherit;
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: rgba(15, 91, 120, 0.7);
+            box-shadow: 0 0 0 3px rgba(15, 91, 120, 0.14);
+        }
+
+        textarea {
+            min-height: 92px;
+            resize: vertical;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            font-family: 'Sora', 'IBM Plex Sans', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 170ms ease, box-shadow 170ms ease, background-color 170ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(17, 37, 53, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, var(--primary), #0f7195);
+            color: #ffffff;
+            margin-top: 2px;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-hover), #0d5f7d);
+        }
+
+        .btn-secondary {
+            width: auto;
+            white-space: nowrap;
+            padding: 9px 14px;
+            font-size: 0.83rem;
+            background: var(--secondary);
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+        }
+
+        .status-msg {
+            margin: 10px 0 0;
+            min-height: 1.2rem;
+            text-align: center;
+            color: var(--success);
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-3px);
+            transition: opacity 220ms ease, transform 220ms ease;
+        }
+
+        .status-msg.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ticket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-state {
+            margin: 8px 0;
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .list-state.error {
+            color: var(--danger);
+        }
+
+        .ticket {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--danger);
+            border-radius: 12px;
+            padding: 14px;
+            animation: card-pop 320ms ease both;
+        }
+
+        .ticket.closed {
+            border-left-color: var(--success);
+            background: #f8fcf9;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 9px;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+            align-items: center;
+        }
+
+        .ticket-id {
+            white-space: nowrap;
+            font-size: 0.78rem;
+            color: #647888;
+        }
+
+        .ticket-meta {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            background: var(--danger);
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .badge.closed {
+            background: var(--success);
+        }
+
+        .category {
+            font-size: 0.82rem;
+            color: #3f5566;
+        }
+
+        .ticket-desc {
+            margin: 0;
+            color: #2f4556;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 7px 11px;
+            font-size: 0.75rem;
+            color: #ffffff;
+        }
+
+        .btn-close {
+            background-color: var(--success);
+        }
+
+        .btn-close:hover {
+            background-color: var(--success-hover);
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-hover);
+        }
+
+        @keyframes rise-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes card-pop {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 18px 14px 28px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .card-heading {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-secondary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Campus Lab Issue Reporter</h1>
+        <p>Serverless issue management powered by AWS Lambda, API Gateway, and DynamoDB.</p>
+    </div>
+
+    <div class="container-wrapper">
+        <div class="card">
+            <h2>Log a New Ticket</h2>
+            <label>Lab Room No.</label>
+            <input type="text" id="lab_room" placeholder="e.g., CC-101" required>
+
+            <label>PC Number / Hostname</label>
+            <input type="text" id="pc_number" placeholder="e.g., PC-24" required>
+
+            <label>Issue Category</label>
+            <select id="category">
+                <option value="Hardware Failure">Hardware Failure</option>
+                <option value="Network Down">Network Down</option>
+                <option value="Software Issue">Software Issue</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label>Description</label>
+            <textarea id="desc" rows="3" placeholder="Describe the error..."></textarea>
+            
+            <button class="btn-primary" onclick="submitTicket()">Submit Ticket</button>
+            <p id="statusMsg" class="status-msg" role="status" aria-live="polite">Ticket logged successfully.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-heading">
+                <h2>Live IT Dashboard</h2>
+                <button class="btn-secondary" onclick="loadTickets()">Refresh Queue</button>
+            </div>
+            <div id="ticketList" class="ticket-list">
+                <p class="list-state">Loading tickets...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // *** PASTE YOUR API GATEWAY INVOKE URL HERE ***
+        const API_URL = "https://1e7etkr3xj.execute-api.us-east-1.amazonaws.com/issues"; 
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // CREATE operation
+        async function submitTicket() {
+            const lab = document.getElementById('lab_room').value;
+            const pc = document.getElementById('pc_number').value;
+            const cat = document.getElementById('category').value;
+            const desc = document.getElementById('desc').value;
+            const statusMessage = document.getElementById('statusMsg');
+
+            if(!lab || !pc) return alert("Please fill in Lab Room and PC Number.");
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lab_room: lab, pc_number: pc, issue_category: cat, description: desc })
+            });
+
+            if(response.ok) {
+                document.getElementById('lab_room').value = '';
+                document.getElementById('pc_number').value = '';
+                document.getElementById('desc').value = '';
+                statusMessage.classList.add('active');
+                setTimeout(() => statusMessage.classList.remove('active'), 3000);
+                loadTickets(); 
+            }
+        }
+
+        // READ operation
+        async function loadTickets() {
+            const listDiv = document.getElementById('ticketList');
+            listDiv.innerHTML = "<p class='list-state'>Loading...</p>";
+            
+            try {
+                const response = await fetch(API_URL);
+                if(!response.ok) throw new Error(`Request failed with ${response.status}`);
+                const data = await response.json();
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                
+                if(issues.length === 0) {
+                    listDiv.innerHTML = "<p class='list-state'>No open issues.</p>";
+                    return;
+                }
+
+                listDiv.innerHTML = issues.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).map(item => {
+                    const isClosed = item.status === 'CLOSED';
+                    const safeLab = escapeHtml(item.lab_room || 'Unknown Lab');
+                    const safePc = escapeHtml(item.pc_number || 'Unknown PC');
+                    const safeTicketId = escapeHtml(item.ticket_id || 'N/A');
+                    const actionTicketId = escapeHtml(item.ticket_id || '');
+                    const safeStatus = escapeHtml(item.status || 'OPEN');
+                    const safeCategory = escapeHtml(item.issue_category || 'General');
+                    const safeDescription = escapeHtml(item.description || 'No description provided.');
+
+                    return `
+                        <div class="ticket ${isClosed ? 'closed' : ''}">
+                            <div class="ticket-header">
+                                <span><strong>${safeLab}</strong> - ${safePc}</span>
+                                <span class="ticket-id">ID: ${safeTicketId}</span>
+                            </div>
+                            <div class="ticket-meta">
+                                <span class="badge ${isClosed ? 'closed' : ''}">${safeStatus}</span>
+                                <span class="category">${safeCategory}</span>
+                            </div>
+                            <p class="ticket-desc">${safeDescription}</p>
+                            
+                            <div class="action-buttons">
+                                ${!isClosed ? `<button class="btn-small btn-close" data-action="close" data-ticket-id="${actionTicketId}">Mark Closed</button>` : ''}
+                                <button class="btn-small btn-delete" data-action="delete" data-ticket-id="${actionTicketId}">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                listDiv.querySelectorAll('button[data-action]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const action = button.getAttribute('data-action');
+                        const ticketId = button.getAttribute('data-ticket-id') || '';
+
+                        if(action === 'close') {
+                            updateTicket(ticketId);
+                        } else if(action === 'delete') {
+                            deleteTicket(ticketId);
+                        }
+                    });
+                });
+            } catch (err) {
+                listDiv.innerHTML = "<p class='list-state error'>Failed to load tickets. Check CORS settings.</p>";
+            }
+        }
+
+        // UPDATE operation
+        async function updateTicket(id) {
+            await fetch(API_URL, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticket_id: id })
+            });
+            loadTickets(); 
+        }
+
+        // DELETE operation
+        async function deleteTicket(id) {
+            if(confirm("Are you sure you want to permanently delete this ticket?")) {
+                await fetch(API_URL, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticket_id: id })
+                });
+                loadTickets(); 
+            }
+        }
+
+        window.onload = loadTickets;
+    </script>
+</body>
+</html>

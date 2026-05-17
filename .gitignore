@@ -1,0 +1,60 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+crash.log
+*.tfplan
+*.tfoverride
+.terraform/providers/
+
+# Terraform provider executables
+*.exe
+
+# AWS / Credentials / env
+*.pem
+*.ppk
+.env
+.env.*
+.aws/
+credentials
+
+# Logs and archives
+*.log
+*.zip
+*.tar.gz
+
+# Node
+node_modules/
+
+# Misc
+secrets.env
+
+# Ignore Terraform plugin caches and lock files created in local infra folders
+**/.terraform/
+**/.terraform.lock.hcl
+**/*.terraform.tfstate
+**/*.terraform.tfstate.backup
+
+# Keep README and other docs tracked
+!README.md

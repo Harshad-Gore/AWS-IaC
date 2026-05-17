@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+# Specifies the CloudFormation template version
+
+Description: >
+  CloudFormation template to create two IAM users,
+  one IAM group, and add both users to the group.
+# Human-readable description of the template
+
+Resources:
+  # Section where AWS resources are defined
+
+  MyIAMGroup:
+    Type: AWS::IAM::Group
+    # Defines an IAM Group
+
+    Properties:
+      GroupName: DevelopersGroup
+      # Name of the IAM Group
+
+  IAMUserOne:
+    Type: AWS::IAM::User
+    # Defines the first IAM User
+
+    Properties:
+      UserName: user-one
+      # Username for the first IAM user
+
+  IAMUserTwo:
+    Type: AWS::IAM::User
+    # Defines the second IAM User
+
+    Properties:
+      UserName: user-two
+      # Username for the second IAM user
+
+  AddUsersToGroup:
+    Type: AWS::IAM::UserToGroupAddition
+    # Adds IAM users to an IAM group
+
+    Properties:
+      GroupName: !Ref MyIAMGroup
+      # References the IAM group
+
+      Users:
+        - !Ref IAMUserOne
+        # Adds first user to the group
+
+        - !Ref IAMUserTwo
+        # Adds second user to the group
