@@ -18,5 +18,4 @@ Legacy folder contains resources created in class  [legacy/](legacy/)
 | 10 | Implement API Gateway | Boto3: [boto3/apigateway/apigateway_http_api.ipynb](boto3/apigateway/apigateway_http_api.ipynb) CloudFormation: [cloudformation/api-gateway/api_gateway_lambda.yaml](cloudformation/api-gateway/api_gateway_lambda.yaml) |
 | 11 | Implement AWS Lambda Functions | [boto3/lambda/lambda_functions.ipynb](boto3/lambda/lambda_functions.ipynb) |
 | 12 | Implement CRUD Operations on AWS DynamoDB | [boto3/dynamodb/dynamodb_crud.ipynb](boto3/dynamodb/dynamodb_crud.ipynb) |
-| 13 | Implement CI/CD Pipeline for sample code | Not implemented 
-|
+| 13 | Implement CI/CD Pipeline for sample code | Not implemented |
