@@ -7,19 +7,19 @@ variable "aws_region" {
 variable "vpc_id" {
   description = "Optional VPC ID override"
   type        = string
-  default     = ""
+  default     = "vpc-0a1a9c27cb913a539"
 }
 
 variable "subnet_ids" {
   description = "Optional subnet IDs override"
   type        = list(string)
-  default     = []
+  default     = ["subnet-0ee0015df9acbe68f", "subnet-0ff08c2cd7c0ad505"] 
 }
 
 variable "ami_id" {
   description = "AMI ID for instances"
   type        = string
-  default     = "ami-0f5ee92e2d63afc18"
+  default     = "ami-09ed39e30153c3bf9"
 }
 
 variable "instance_type" {
@@ -49,5 +49,5 @@ variable "desired_capacity" {
 variable "key_name" {
   description = "Optional key pair name"
   type        = string
-  default     = ""
+  default     = "key"
 }
