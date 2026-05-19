@@ -5,18 +5,21 @@ Parameters:
   VpcTemplateUrl:
     Type: String
     Description: S3 URL for the VPC child template
+    Default: https://tamplate-holder-143.s3.ap-south-1.amazonaws.com/vpc.yaml
   IamTemplateUrl:
     Type: String
     Description: S3 URL for the IAM child template
+    Default: https://tamplate-holder-143.s3.ap-south-1.amazonaws.com/iam.yaml
   Ec2TemplateUrl:
     Type: String
     Description: S3 URL for the EC2 child template
+    Default: https://tamplate-holder-143.s3.ap-south-1.amazonaws.com/ec2.yaml
   VpcCidr:
     Type: String
-    Default: 10.10.0.0/16
+    Default: 10.20.0.0/16
   PublicSubnetCidr:
     Type: String
-    Default: 10.10.1.0/24
+    Default: 10.20.1.0/24
   AvailabilityZone:
     Type: String
     Default: ap-south-1a
